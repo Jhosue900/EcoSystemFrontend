@@ -8,14 +8,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
-import { useState, useEffect } from "react";
-import {
-  getStoredToken,
-  getStoredUser,
-  isValidJwt,
-  type StoredUser,
-} from "../../lib/auth";
-
+import { useEffect } from "react";
+import { getStoredToken, isValidJwt } from "../../lib/auth";
 
 const benefits = [
   [Leaf, "Carbon Impact", "Your donation saves approx. 12kg of CO2 emissions."],
@@ -32,32 +26,24 @@ export const DonationStepLayout = ({
   title,
   children,
   nextLabel = "Next Step",
+  nextDisabled = false,
   onNext,
 }: {
   step: number;
   title: string;
   children: React.ReactNode;
   nextLabel?: string;
+  nextDisabled?: boolean;
   onNext: () => void;
 }): JSX.Element => {
   const navigate = useNavigate();
 
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<StoredUser | null>(null);
-  
-    useEffect(() => {
-      const authenticated = isValidJwt(getStoredToken());
-      setIsAuthenticated(authenticated);
-  
-      if (!authenticated) {
-        navigate("/register");
-        return;
-      }
-  
-      setUser(getStoredUser());
-    }, [navigate]);
-  
-
+  // Único guard de autenticación para todos los pasos del formulario
+  useEffect(() => {
+    if (!isValidJwt(getStoredToken())) {
+      navigate("/register");
+    }
+  }, [navigate]);
 
   return (
     <div className="mx-auto max-w-4xl text-center">
@@ -106,7 +92,8 @@ export const DonationStepLayout = ({
           <Button
             type="button"
             onClick={onNext}
-            className="rounded-full bg-[#27bb5c] px-6 font-bold text-white hover:bg-[#149b47]"
+            disabled={nextDisabled}
+            className="rounded-full bg-[#27bb5c] px-6 font-bold text-white hover:bg-[#149b47] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {nextLabel} <ArrowRight size={16} />
           </Button>

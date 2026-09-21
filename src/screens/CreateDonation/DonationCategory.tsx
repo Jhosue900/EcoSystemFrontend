@@ -1,14 +1,8 @@
 import { Shirt, Soup, Tag, ToyBrick } from "lucide-react";
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppShell, PageContainer } from "../../components/AppShell";
 import { DonationStepLayout, ChoiceCard } from "./DonationStepLayout";
-import {
-  getStoredToken,
-  getStoredUser,
-  isValidJwt,
-  type StoredUser,
-} from "../../lib/auth";
+import { useDonation } from "./DonationContext";
 
 const categories = [
   [Soup, "Food"],
@@ -16,24 +10,10 @@ const categories = [
   [Tag, "Household"],
   [ToyBrick, "Kids & Toys"],
 ];
+
 export const DonationCategory = (): JSX.Element => {
-  const [selected, setSelected] = useState("");
   const navigate = useNavigate();
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<StoredUser | null>(null);
-
-  useEffect(() => {
-    const authenticated = isValidJwt(getStoredToken());
-    setIsAuthenticated(authenticated);
-
-    if (!authenticated) {
-      navigate("/register");
-      return;
-    }
-
-    setUser(getStoredUser());
-  }, [navigate]);
+  const { draft, updateDraft } = useDonation();
 
   return (
     <AppShell>
@@ -41,6 +21,7 @@ export const DonationCategory = (): JSX.Element => {
         <DonationStepLayout
           step={2}
           title="Choose a Category"
+          nextDisabled={!draft.category}
           onNext={() => navigate("/create-donation/details")}
         >
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -49,8 +30,8 @@ export const DonationCategory = (): JSX.Element => {
                 key={label as string}
                 icon={Icon as typeof Soup}
                 label={label as string}
-                selected={selected === (label as string)}
-                onClick={() => setSelected(label as string)}
+                selected={draft.category === (label as string)}
+                onClick={() => updateDraft({ category: label as string })}
               />
             ))}
           </div>
