@@ -5,8 +5,6 @@ import { AppShell, PageContainer } from "../../components/AppShell";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
-// Strip any trailing slash so we never end up with a double "//" in the
-// final URL (which triggers a redirect that strips CORS headers).
 const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
 
 const SuccessCard = ({ name }: { name: string }): JSX.Element => {

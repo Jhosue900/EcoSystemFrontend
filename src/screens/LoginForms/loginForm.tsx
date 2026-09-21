@@ -5,9 +5,8 @@ import { AppShell, PageContainer } from "../../components/AppShell";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
-// Strip any trailing slash so we never end up with a double "//" in the
-// final URL (which triggers a redirect that strips CORS headers).
-const API_BASE = import.meta.env.VITE_API_URL;
+// Asegura limpiar cualquier barra final para evitar URLs con "//"
+const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
 
 export const Login = (): JSX.Element => {
   const navigate = useNavigate();
@@ -40,14 +39,10 @@ export const Login = (): JSX.Element => {
         throw new Error(data?.error ?? "Correo o contraseña incorrectos.");
       }
 
-      // The backend returns the token at data.session.access_token
-      // (Supabase-style response), not data.token.
       if (data?.session?.access_token) {
         localStorage.setItem("ecosystem_jwt", data.session.access_token);
       }
 
-      // Keep a lightweight copy of the user's basic info so the UI can show
-      // a name without needing to decode the JWT.
       if (data?.user) {
         localStorage.setItem("ecosystem_user", JSON.stringify(data.user));
       }
