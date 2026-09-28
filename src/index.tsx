@@ -15,6 +15,9 @@ import { DonationDetails } from "./screens/DonationDetails/DonationDetails";
 import { DonationHistory } from "./screens/DonationHistory/DonationHistory";
 import { LandingPage } from "./screens/LandingPage/LandingPage";
 import { DonationMarketplace } from "./screens/DonationMarketplace/DonationMarketplace";
+import { CreateCollectionPoint } from "./screens/CollectionPoint/CreateCollectionPoint";
+import { CollectionPoints } from "./screens/CollectionPoint/CollectionPoints";
+import { MyCollectionPoints } from "./screens/CollectionPoint/MyCollectionPoints";
 
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
@@ -26,10 +29,23 @@ createRoot(document.getElementById("app") as HTMLElement).render(
 
         <Route element={<DonationFlow />}>
           <Route path="/create-donation" element={<CreateDonation />} />
-          <Route path="/create-donation/category" element={<DonationCategory />} />
-          <Route path="/create-donation/details" element={<DonationDetailsForm />} />
+          <Route
+            path="/create-donation/category"
+            element={<DonationCategory />}
+          />
+          <Route
+            path="/create-donation/details"
+            element={<DonationDetailsForm />}
+          />
           <Route path="/create-donation/review" element={<DonationReview />} />
         </Route>
+
+        <Route path="/collection-points" element={<CollectionPoints />} />
+        <Route
+          path="/collection-points/new"
+          element={<CreateCollectionPoint />}
+        />
+        <Route path="/my-collection-points" element={<MyCollectionPoints />} />
 
         <Route path="/register" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />

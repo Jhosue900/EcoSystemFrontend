@@ -5,6 +5,7 @@ import { clearStoredToken, getCurrentUser, getStoredToken, isValidJwt } from "..
 
 const links = [
   { label: "Marketplace", to: "/marketplace" },
+  { label: "Collection points", to: "/collection-points" },
   { label: "History", to: "/history" },
 ];
 
