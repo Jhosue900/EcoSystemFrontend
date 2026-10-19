@@ -3,6 +3,17 @@ export interface JwtPayload {
   sub?: string;
   name?: string;
   email?: string;
+  id?: string | number;
+  mail?: string;
+  user_type?: string;
+  user_metadata?: {
+    name?: string;
+    lastname?: string;
+    age?: number | string;
+    country?: string;
+    city?: string;
+    user_type?: string;
+  };
   [key: string]: unknown;
 }
 
@@ -10,6 +21,11 @@ export interface StoredUser {
   id?: string | number;
   name?: string;
   mail?: string;
+  lastname?: string;
+  age?: number | string;
+  country?: string;
+  city?: string;
+  user_type?: string;
   [key: string]: unknown;
 }
 

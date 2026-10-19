@@ -18,6 +18,16 @@ import { DonationMarketplace } from "./screens/DonationMarketplace/DonationMarke
 import { CreateCollectionPoint } from "./screens/CollectionPoint/CreateCollectionPoint";
 import { CollectionPoints } from "./screens/CollectionPoint/CollectionPoints";
 import { MyCollectionPoints } from "./screens/CollectionPoint/MyCollectionPoints";
+import { VolunteerMarketplace } from "./screens/VolunteerMarketplace/VolunteerMarketplace";
+import { Profile } from "./screens/Profile/Profile";
+import { CreateVolunteerPost } from "./screens/VolunteerMarketplace/CreateVolunteerPost";
+import { MyVolunteerPosts } from "./screens/VolunteerMarketplace/MyVolunteerPosts";
+import { VolunteerHistory } from "./screens/VolunteerHistory/VolunteerHistory";
+import { DonorHistory } from "./screens/DonationHistory/DonorHistory";
+import { MyDonations } from "./screens/DonationHistory/MyDonations";
+import { BeneficiaryHistory } from "./screens/BeneficiaryHistory/BeneficiaryHistory";
+import { Terms } from "./screens/Legal/Terms";
+import { Privacy } from "./screens/Legal/Privacy";
 
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
@@ -52,6 +62,29 @@ createRoot(document.getElementById("app") as HTMLElement).render(
         <Route path="/history" element={<DonationHistory />} />
         <Route path="/donation-details" element={<DonationDetails />} />
         <Route path="*" element={<LandingPage />} />
+
+        <Route path="/profile" element={<Profile />} />
+
+        <Route
+          path="/volunteer-marketplace"
+          element={<VolunteerMarketplace />}
+        />
+        <Route path="/volunteer-posts/new" element={<CreateVolunteerPost />} />
+
+        <Route path="/my-volunteer-posts" element={<MyVolunteerPosts />} />
+
+        <Route path="/volunteer-history" element={<VolunteerHistory />} />
+
+        <Route path="/donor-history" element={<DonorHistory />} />
+
+        <Route path="/my-donations" element={<MyDonations />} />
+
+        <Route path="/beneficiary-history" element={<BeneficiaryHistory />} />
+
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+
+        
       </Routes>
     </BrowserRouter>
   </StrictMode>,

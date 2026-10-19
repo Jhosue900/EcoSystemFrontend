@@ -1,136 +1,88 @@
-import { Activity } from "lucide-react";
+import { 
+  ArrowRight, 
+  HandHeart, 
+  History, 
+  MapPin, 
+  Store, 
+  Users, 
+  UtensilsCrossed 
+} from "lucide-react";
 import { AppShell, PageContainer, SectionHeading } from "../../components/AppShell";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getStoredToken, getStoredUser, isValidJwt, type StoredUser } from "../../lib/auth";
-
-// Stats temporarily disabled — kept here so they're easy to bring back later.
-// import { Leaf, Utensils, Shirt } from "lucide-react";
-// import { StatCard } from "../../components/AppShell";
-
-// const months = [38, 61, 45, 72, 58, 66];
-// const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-
-// const impactGoals: [string, string][] = [
-//   ["CO₂ milestone", "80%"],
-//   ["Community food", "45%"],
-// ];
-
-const recentActivity: [string, string, string][] = [
-  [
-    "Pantry Surplus Pickup",
-    "15kg of organic vegetables delivered to Community Hub.",
-    "2h ago",
-  ],
-  [
-    "Textile Donation Approved",
-    "Your bag of cotton boxes has been processed for reuse.",
-    "Yesterday",
-  ],
-];
+import { getStoredToken, isValidJwt, decodeJwt } from "../../lib/auth";
+import { Button } from "../../components/ui/button";
 
 export function Dashboard(): JSX.Element {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<StoredUser | null>(null);
+  const [userName, setUserName] = useState<string>("");
+  const [userType, setUserType] = useState<string>("donor");
 
   useEffect(() => {
-    const authenticated = isValidJwt(getStoredToken());
-    setIsAuthenticated(authenticated);
-
-    if (!authenticated) {
+    const token = getStoredToken();
+    if (!isValidJwt(token)) {
       navigate("/login");
       return;
     }
 
-    setUser(getStoredUser());
+    const payload = decodeJwt(token as string);
+    if (payload) {
+      setUserName((payload.name as string) || "there");
+      setUserType((payload.user_type as string) || "donor");
+    }
   }, [navigate]);
+
+  const roleActions = {
+    donor: [
+      { title: "Create a donation", desc: "Publish items you want to give a second life.", icon: HandHeart, path: "/create-donation", color: "bg-[#e8f8e9] text-[#087532]" },
+      { title: "Manage my donations", desc: "Pause or delete the items you have published.", icon: Store, path: "/my-donations", color: "bg-[#e8f8e9] text-[#087532]" },
+      { title: "My activity history", desc: "View all the items you have donated.", icon: History, path: "/donor-history", color: "bg-[#f0f4f0] text-[#526158]" },
+    ],
+    beneficiary: [
+      { title: "Explore Marketplace", desc: "Find items you need from local donors.", icon: UtensilsCrossed, path: "/marketplace", color: "bg-[#e8f8e9] text-[#087532]" },
+      { title: "Volunteer Hub", desc: "Request help or see volunteer opportunities.", icon: Users, path: "/volunteer-marketplace", color: "bg-[#e8f8e9] text-[#087532]" },
+      { title: "Offer a collection point", desc: "Provide a space to receive community donations.", icon: Store, path: "/collection-points/new", color: "bg-[#e8f8e9] text-[#087532]" },
+      { title: "My activity history", desc: "View your spaces and volunteer requests.", icon: History, path: "/beneficiary-history", color: "bg-[#f0f4f0] text-[#526158]" },
+    ],
+    volunteer: [
+      { title: "Volunteer Marketplace", desc: "Find people who need help moving donations.", icon: Users, path: "/volunteer-marketplace", color: "bg-[#e8f8e9] text-[#087532]" },
+      { title: "Offer a collection point", desc: "Become a hub for donations in your area.", icon: Store, path: "/collection-points/new", color: "bg-[#e8f8e9] text-[#087532]" },
+      { title: "My activity history", desc: "View your past volunteer activities.", icon: History, path: "/volunteer-history", color: "bg-[#f0f4f0] text-[#526158]" },
+    ],
+  };
+
+  const actions = roleActions[userType as keyof typeof roleActions] || roleActions.donor;
 
   return (
     <AppShell>
       <PageContainer>
-        <SectionHeading title={`Hello, ${user?.name ?? "there"}!`} />
+        <SectionHeading 
+          title={`Hello, ${userName}!`} 
+          description={`Welcome back to EcoSystem. Here is what you can do as a ${userType}.`}
+        />
 
-        {/* Stat cards — disabled for now
-        <div className="grid gap-4 sm:grid-cols-3">
-          <StatCard icon={Leaf} label="CO₂ emissions prevented" value="452kg" />
-          <StatCard icon={Utensils} label="Food rescued" value="84kg" color="teal" />
-          <StatCard icon={Shirt} label="Clothing reused" value="28 items" color="red" />
-        </div>
-        */}
-
-        {/* Donation Trends + Impact Goals + Lifetime donations — disabled for now
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-          <div className="rounded-[24px] bg-white p-6 shadow-[0_12px_30px_rgba(43,91,58,.08)]">
-            <div className="flex items-center justify-between">
-              <h2 className="font-extrabold">Donation Trends</h2>
-              <span className="text-xs text-[#9aa8a0]">Last 6 months</span>
-            </div>
-
-            <div className="mt-8 flex h-48 items-end justify-between gap-3">
-              {months.map((height, index) => (
-                <div
-                  key={monthLabels[index]}
-                  className="flex h-full flex-1 flex-col items-center justify-end gap-2"
-                >
-                  <div
-                    style={{ height: `${height}%` }}
-                    className="w-full max-w-16 rounded-t-[18px] bg-gradient-to-t from-[#087532] to-[#9be5aa]"
-                  />
-                  <span className="text-xs text-[#718077]">{monthLabels[index]}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="rounded-[24px] bg-white p-6 shadow-[0_12px_30px_rgba(43,91,58,.08)]">
-              <h2 className="font-extrabold">Impact Goals</h2>
-              {impactGoals.map(([label, value]) => (
-                <div key={label} className="mt-5">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span>{label}</span>
-                    <span className="text-[#087532]">{value}</span>
-                  </div>
-                  <div className="mt-2 h-2 rounded-full bg-[#e3eee5]">
-                    <div className="h-full rounded-full bg-[#31c366]" style={{ width: value }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="rounded-[24px] bg-[#087532] p-6 text-white">
-              <p className="text-xs uppercase tracking-wider text-[#a7e5b6]">Lifetime donations</p>
-              <p className="mt-2 text-3xl font-extrabold">$12,480</p>
-              <p className="mt-1 text-sm text-[#c4e9cb]">
-                Total value returned through your circular economy participation.
-              </p>
-            </div>
-          </div>
-        </div>
-        */}
-
-        {/* Recent Activity */}
-        <div className="mt-6 rounded-[24px] bg-white p-6 shadow-[0_12px_30px_rgba(43,91,58,.08)]">
-          <div className="flex items-center justify-between">
-            <h2 className="font-extrabold">Recent Activity</h2>
-            <Activity size={18} className="text-[#18a34a]" />
-          </div>
-
-          <div className="mt-4 space-y-3">
-            {recentActivity.map(([title, text, date]) => (
-              <div key={title} className="flex items-center gap-3 rounded-xl bg-[#f2faf3] p-3">
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-[#d9f2df] text-[#07933d]">
-                  <Activity size={15} />
-                </span>
-                <div className="flex-1">
-                  <p className="text-sm font-bold">{title}</p>
-                  <p className="text-xs text-[#718077]">{text}</p>
-                </div>
-                <span className="text-[11px] text-[#718077]">{date}</span>
+        {/* Grid responsive dinámico */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {actions.map((action) => (
+            <div 
+              key={action.title} 
+              className="flex flex-col items-start rounded-[24px] bg-white p-6 shadow-[0_10px_24px_rgba(43,91,58,.06)] transition-transform hover:-translate-y-1"
+            >
+              <div className={`mb-4 grid h-12 w-12 place-items-center rounded-2xl ${action.color}`}>
+                <action.icon size={22} />
               </div>
-            ))}
-          </div>
+              <h3 className="text-lg font-extrabold">{action.title}</h3>
+              <p className="mt-2 mb-6 flex-1 text-sm leading-6 text-[#617066]">
+                {action.desc}
+              </p>
+              <Button 
+                onClick={() => navigate(action.path)}
+                className="w-full rounded-full bg-[#27bb5c] font-bold text-white hover:bg-[#149b47]"
+              >
+                Go <ArrowRight size={16} />
+              </Button>
+            </div>
+          ))}
         </div>
       </PageContainer>
     </AppShell>

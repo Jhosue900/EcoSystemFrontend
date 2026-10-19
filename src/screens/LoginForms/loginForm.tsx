@@ -71,7 +71,7 @@ export const Login = (): JSX.Element => {
           </h1>
           <p className="mx-auto mt-3 max-w-sm leading-6 text-[#617066]">
             Accede a tu cuenta para seguir donando y viendo tu impacto en
-            ReVida.
+            EcoSystem
           </p>
 
           <form
